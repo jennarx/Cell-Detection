@@ -35,7 +35,28 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
       }
     }
   }
-  
+
+    //Apply binary threshold to an image with a given threshold of 90
+    void binary_threshold(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+      for (int x = 0; x < BMP_WIDTH; x++)
+      {
+        for (int y = 0; y < BMP_HEIGTH; y++)
+        {
+          unsigned char average = (input_image[x][y][0] + input_image[x][y][1] + input_image[x][y][2]) / 3;
+          for (int c = 0; c < BMP_CHANNELS; c++)
+          {
+            if (average > 90)
+            {
+              output_image[x][y][c] = 255;
+            }
+            else
+            {
+              output_image[x][y][c] = 0;
+            }
+          }
+        }
+      }
+    }
 
   //Declaring the array to store the image (unsigned char = unsigned 8 bit)
   unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
@@ -62,9 +83,14 @@ int main(int argc, char** argv)
   read_bitmap(argv[1], input_image);
 
   //Run inversion
-  invert(input_image,output_image);
+  //invert(input_image,output_image);
+
   //Run greyscale
   greyscale(input_image,output_image);
+
+  //Run binary threshold
+  binary_threshold(input_image,output_image);
+
   //Save image to file
   write_bitmap(output_image, argv[2]);
 
