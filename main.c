@@ -7,7 +7,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "cbmp.h"
-
+#include <dirent.h>
+#include <string.h>
+#define Max_celler 1000
+int coordinate_x_cells[Max_celler];
+int coordinate_y_cells[Max_celler];
+int cells = 0;
+void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]);
 //Function to invert pixels of an image (negative)
 void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
   for (int x = 0; x < BMP_WIDTH; x++)
@@ -68,6 +74,7 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
   // (e.g. erosion_0.bmp, erosion_1.bmp, erosion_2.bmp, etc.)
   // stop the process when the output image is all black (all pixels are 0)
   void binary_erosion(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+    cell_detection_function(output_image);
     int iteration = 0;
     int black = 0;
     while (black == 0)
@@ -101,6 +108,7 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
       char filename[100];
       sprintf(filename, "test_erosion/erosion_%d.bmp", iteration);
       write_bitmap(output_image, filename);
+      cell_detection_function(output_image);
       iteration++;
       for (int x = 0; x < BMP_WIDTH; x++)
       {
@@ -113,8 +121,62 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
         }
       }
     }
+    printf("Number of cells: %d\n", cells);
   }
 
+void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+  //Checks the whole image, by create a 12x12 area to check for white cells
+  
+  for (int x = 0; x < BMP_WIDTH; x++){
+    for (int y = 0; y < BMP_HEIGTH; y++){
+          int white = 0;
+          for (int i = 0; i <= 12; i++){
+            for (int j = 0; j <= 12; j++){
+              if (input_image[x + i][y + j][0] == 255){
+                white = 1;
+                break;
+              }
+            }
+            if (white == 1) break;
+          }
+          if (white == 0) continue;
+          int outer_white = 0;
+
+          //Checks if there are any white cells on the outer layer
+          for (int i = -1; i <= 13; i++){
+            if (input_image[x+i][y-1][0]==255 || input_image[x+i][y+13][0]==255){
+              outer_white = 1;
+              break;
+            }
+            for (int j = -1; j <= 13; j++){
+              if(input_image[x-1][y+j][0]==255 || input_image[x+13][y+j][0]==255){
+                outer_white = 1;
+                break;
+              }
+            }
+          }
+
+          //If there are no white cells in the outer layer, it adds 1 to cells and makes the 12x12 black
+          //This also checks if coordinates are already in the array
+          if (outer_white == 0){
+            cells++;
+            for (int i = 0; i <= 12; i++){
+              for (int j = 0; j <= 12; j++){
+                input_image[x + i][y + j][0] = 0;
+                for (int k=0;k<Max_celler;k++){
+                  if (!coordinate_x_cells[k]==x && !coordinate_y_cells[k]==y){
+                    coordinate_x_cells[cells] = x;
+                    coordinate_y_cells[cells] = y;
+                  }
+                }
+              }
+            }
+          }
+    }
+  }
+}
+
+// Function to process all .bmp images in a folder
 
   //Declaring the array to store the image (unsigned char = unsigned 8 bit)
   unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
@@ -122,6 +184,7 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
   unsigned char output_image1[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
   unsigned char output_image2[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
   unsigned char output_image3[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
+  unsigned char output_image4[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 
 
 //Main function
@@ -138,27 +201,26 @@ int main(int argc, char** argv)
       fprintf(stderr, "Usage: %s <output file path> <output file path>\n", argv[0]);
       exit(1);
   }
-
+  int coordinate_x_cells[Max_celler], coordinate_y_cells[Max_celler];
   printf("Example program - 02132 - A1\n");
 
   // Load image from file
-read_bitmap(argv[1], input_image);
+  read_bitmap(argv[1], input_image);
 
-// Run inversion
-// invert(input_image, output_image);
+  // Run inversion
+  // invert(input_image, output_image);
 
-// Run greyscale
-greyscale(input_image, output_image1);
+  // Run greyscale
+  greyscale(input_image, output_image1);
 
-// Run binary threshold
-binary_threshold(output_image1, output_image2);
+  // Run binary threshold
+  binary_threshold(output_image1, output_image2);
 
-// Run binary erosion
-binary_erosion(output_image2, output_image3);
+  // Run binary erosion and cell detection
+  binary_erosion(output_image2, output_image3);
 
-// Save image to file
-write_bitmap(output_image3, argv[2]);
-
-printf("Done!\n");
-return 0;
+  // Save image to file
+  write_bitmap(output_image4, argv[2]);
+  printf("Done!\n");
+  return 0;
 }
