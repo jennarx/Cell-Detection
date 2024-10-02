@@ -152,7 +152,7 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
 void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
   start = clock();
   //Checks the whole image, by create a 12x12 area to check for white cells
-  int checking_area = 12;
+  int checking_area = 8;
   for (int x = 0; x < BMP_WIDTH; x++){
     for (int y = 0; y < BMP_HEIGTH; y++){
       int white = 0;
@@ -169,12 +169,12 @@ void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BM
           int outer_white = 0;
 
           //Checks if there are any white cells on the outer layer
-        for (int i = -1; i <= checking_area+1; i++){
+        for (int i = -1; i <= checking_area+3; i++){
           if (input_image[x+i][y-1][0]==255 || input_image[x+i][y+checking_area+1][0]==255){
             outer_white = 1;
             break;
           }
-          for (int j = -1; j <= checking_area+1; j++){
+          for (int j = -1; j <= checking_area+3; j++){
             if(input_image[x-1][y+j][0]==255 || input_image[x+checking_area+1][y+j][0]==255){
               outer_white = 1;
               break;
@@ -231,7 +231,7 @@ void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_
         y+=6;
         // Draw horizontal line of the cross
         for (int j = -cross_size; j <= cross_size; j++) {
-            if (x + j >= 0) {
+            if (x + j >= 0 && + j < BMP_WIDTH) {
                 output_image[x + j][y][0] = 255;
                 output_image[x + j][y][1] = 0;
                 output_image[x + j][y][2] = 0;
@@ -240,7 +240,7 @@ void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_
 
         // Draw vertical line of the cross
         for (int j = -cross_size; j <= cross_size; j++) {
-            if (y + j >= 0) {
+            if (y + j >= 0 && y + j < BMP_HEIGTH) {
                 output_image[x][y + j][0] = 255;
                 output_image[x][y + j][1] = 0;
                 output_image[x][y + j][2] = 0;
