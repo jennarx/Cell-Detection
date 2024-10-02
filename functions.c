@@ -202,7 +202,7 @@ void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_
     for (int i = 1; i < cells; i++) {
         int x = coordinate_x_cells[i];
         int y = coordinate_y_cells[i];
-        printf("Cell %d: x=%d, y=%d\n", i+1, x, y);
+        printf("Cell %d: x=%d, y=%d\n", i, x, y);
 
         // Draw horizontal line of the cross
         for (int j = -cross_size; j <= cross_size; j++) {
