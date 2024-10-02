@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "functions.h"
 #include "cbmp.h"
+#include <time.h>
 
 
 //Declaring the array to store the image (unsigned char = unsigned 8 bit)
@@ -14,6 +15,9 @@ unsigned char output_image4[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 
 //Main function
 int main(int argc, char** argv){
+  clock_t start, end;
+  double cpu_time_used;
+  start = clock();
   //argc counts how may arguments are passed
   //argv[0] is a string with the name of the program
   //argv[1] is the first command line argument (input image)
@@ -46,6 +50,9 @@ int main(int argc, char** argv){
   // Save image to file
   
   write_bitmap(output_image4, argv[2]);
+  end = clock();
+  cpu_time_used= end - start;
+  printf("Total time for overall: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
   printf("Done!\n");
   return 0;
 }

@@ -5,6 +5,7 @@
 #include "cbmp.h"
 #include <assert.h>
 #include <dirent.h>
+#include <time.h>
 //To compile (linux/mac): gcc cbmp.c functions.c main.c -o main.out -std=c99
 //To run (linux/mac): ./main.out example.bmp example_inv.bmp
 
@@ -18,9 +19,12 @@
 int coordinate_x_cells[Max_celler];
 int coordinate_y_cells[Max_celler];
 int cells = 0;
+clock_t start, end;
+double cpu_time_used;
 
 //Function to invert pixels of an image (negative)
 void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+  start = clock();
   for (int x = 0; x < BMP_WIDTH; x++)
   {
     for (int y = 0; y < BMP_HEIGTH; y++)
@@ -31,9 +35,13 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
       }
     }
   }
+  end = clock();
+  cpu_time_used= end - start;
+  printf("Total time for invert: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
 }
   //Function to greyscale pixels of an image by taking the average of the RGB values
   void greyscale(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+    start = clock();
     for (int x = 0; x < BMP_WIDTH; x++)
     {
       for (int y = 0; y < BMP_HEIGTH; y++)
@@ -45,10 +53,14 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
         }
       }
     }
+    end = clock();
+    cpu_time_used= end - start;
+    printf("Total time for grayscale: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
   }
 
     //Apply binary threshold to an image with a given threshold of 90
     void binary_threshold(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+      start = clock();
       for (int x = 0; x < BMP_WIDTH; x++)
       {
         for (int y = 0; y < BMP_HEIGTH; y++)
@@ -67,6 +79,9 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
           }
         }
       }
+      end = clock();
+      cpu_time_used= end - start;
+      printf("Total time for binary_threshold: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
     }
 
   //Apply binary erosion to an image
@@ -79,6 +94,7 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
   // (e.g. erosion_0.bmp, erosion_1.bmp, erosion_2.bmp, etc.)
   // stop the process when the output image is all black (all pixels are 0)
   void binary_erosion(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+    start = clock();
     cell_detection_function(output_image);
     int iteration = 0;
     int black = 0;
@@ -126,10 +142,15 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
         }
       }
     }
+
     printf("Number of cells: %d\n", cells);
+    end = clock();
+    cpu_time_used= end - start;
+    printf("Total time for binary_erosion: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
   }
 
 void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
+  start = clock();
   //Checks the whole image, by create a 12x12 area to check for white cells
   int checking_area = 12;
   for (int x = 0; x < BMP_WIDTH; x++){
@@ -161,8 +182,8 @@ void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BM
           }
         }
 
-          //If there are no white cells in the outer layer, it adds 1 to cells and makes the 12x12 black
-          //This also checks if coordinates are already in the array
+        //If there are no white cells in the outer layer, it adds 1 to cells and makes the 12x12 black
+        //This also checks if coordinates are already in the array
         if (outer_white == 0){
           int white_cell_exists = 0;
           for (int k=0;k<=Max_celler;k++){
@@ -173,8 +194,8 @@ void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BM
           }
           if (!white_cell_exists){
             cells++;
-            coordinate_x_cells[cells] = x+6;
-            coordinate_y_cells[cells] = y+6;
+            coordinate_x_cells[cells] = x;
+            coordinate_y_cells[cells] = y;
             for (int i = 0; i <= checking_area; i++){
               for (int j = 0; j <= checking_area; j++){
               input_image[x + i][y + j][0] = 0;
@@ -184,12 +205,14 @@ void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BM
         }
     }
   }
+  end = clock();
+  cpu_time_used= end - start;
+  printf("Total time for cell_detection_function: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
 }
 
 void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]) {
-    int cross_size = 7; // Size of the cross (half-length)
-    int color = 255;
-
+    start = clock();
+    int cross_size = 8; // Size of the cross
     // Copy input_image to output_image
     for (int x = 0; x < BMP_WIDTH; x++) {
         for (int y = 0; y < BMP_HEIGTH; y++) {
@@ -202,12 +225,14 @@ void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_
     for (int i = 1; i < cells; i++) {
         int x = coordinate_x_cells[i];
         int y = coordinate_y_cells[i];
-        printf("Cell %d: x=%d, y=%d\n", i, x, y);
-
+        //printf("Cell %d: x=%d, y=%d\n", i, x, y);
+        //så lortet tegner i midten af cellen og ikke i hjørnet
+        x+=6;
+        y+=6;
         // Draw horizontal line of the cross
         for (int j = -cross_size; j <= cross_size; j++) {
-            if (x + j >= 0 && x + j < BMP_WIDTH) {
-                output_image[x + j][y][0] = color;
+            if (x + j >= 0) {
+                output_image[x + j][y][0] = 255;
                 output_image[x + j][y][1] = 0;
                 output_image[x + j][y][2] = 0;
             }
@@ -215,13 +240,16 @@ void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_
 
         // Draw vertical line of the cross
         for (int j = -cross_size; j <= cross_size; j++) {
-            if (y + j >= 0 && y + j < BMP_HEIGTH) {
-                output_image[x][y + j][0] = color;
+            if (y + j >= 0) {
+                output_image[x][y + j][0] = 255;
                 output_image[x][y + j][1] = 0;
                 output_image[x][y + j][2] = 0;
             }
         }
     }
+    end = clock();
+    cpu_time_used= end - start;
+    printf("Total time for draw_crosses_on_image: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
 }
 
 
