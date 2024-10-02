@@ -56,7 +56,7 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
           unsigned char average = (input_image[x][y][0] + input_image[x][y][1] + input_image[x][y][2]) / 3;
           for (int c = 0; c < BMP_CHANNELS; c++)
           {
-            if (average > 90)
+            if (average > 120)
             {
               output_image[x][y][c] = 255;
             }
@@ -131,11 +131,12 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
 
 void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
   //Checks the whole image, by create a 12x12 area to check for white cells
+  int checking_area = 12;
   for (int x = 0; x < BMP_WIDTH; x++){
     for (int y = 0; y < BMP_HEIGTH; y++){
       int white = 0;
-      for (int i = 0; i <= 12; i++){
-        for (int j = 0; j <= 12; j++){
+      for (int i = 0; i <= checking_area; i++){
+        for (int j = 0; j <= checking_area; j++){
           if (input_image[x + i][y + j][0] == 255){
             white = 1;
             break;
@@ -147,13 +148,13 @@ void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BM
           int outer_white = 0;
 
           //Checks if there are any white cells on the outer layer
-        for (int i = -1; i <= 13; i++){
-          if (input_image[x+i][y-1][0]==255 || input_image[x+i][y+13][0]==255){
+        for (int i = -1; i <= checking_area+1; i++){
+          if (input_image[x+i][y-1][0]==255 || input_image[x+i][y+checking_area+1][0]==255){
             outer_white = 1;
             break;
           }
-          for (int j = -1; j <= 13; j++){
-            if(input_image[x-1][y+j][0]==255 || input_image[x+13][y+j][0]==255){
+          for (int j = -1; j <= checking_area+1; j++){
+            if(input_image[x-1][y+j][0]==255 || input_image[x+checking_area+1][y+j][0]==255){
               outer_white = 1;
               break;
             }
@@ -174,8 +175,8 @@ void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BM
             cells++;
             coordinate_x_cells[cells] = x+6;
             coordinate_y_cells[cells] = y+6;
-            for (int i = 0; i <= 12; i++){
-              for (int j = 0; j <= 12; j++){
+            for (int i = 0; i <= checking_area; i++){
+              for (int j = 0; j <= checking_area; j++){
               input_image[x + i][y + j][0] = 0;
               }
             }
