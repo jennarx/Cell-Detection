@@ -85,14 +85,6 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
     }
 
   //Apply binary erosion to an image
-  //the structuring element is a 3x3 matrix with 0 in the corners and 1 in the center and sides
-  //if any of the neighboring pixels are 0, the center pixel is set to 0
-  //where the neighboring pixels are the pixels above, below, left, and right of the center pixel
-  //if any neighboring pixel is outside the image, it is considered to be 0
-  //print the output image of every single iteration of the erosion process to the folder "test_erosion" 
-  //with the name "erosion_x.bmp" where x is the iteration number 
-  // (e.g. erosion_0.bmp, erosion_1.bmp, erosion_2.bmp, etc.)
-  // stop the process when the output image is all black (all pixels are 0)
   void binary_erosion(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
     start = clock();
     cell_detection_function(output_image);
@@ -254,7 +246,7 @@ void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_
 }
 
 
-// Function to compare two images
+// Function to compare two images for testing purposes
 void assert_equal(unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char expected_output[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], const char* test_name) {
     int passed = 1;
     for (int x = 0; x < BMP_WIDTH; x++) {
@@ -279,7 +271,7 @@ void assert_equal(unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS
 void test_assert_equal() {
     printf("Running test_assert_equal...\n");
 
-    // Allocate memory for images on the heap
+    // Allocate memory for images 
     unsigned char (*image1)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*image2)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*image3)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
@@ -315,7 +307,7 @@ void test_assert_equal() {
 void test_invert() {
     printf("Running test_invert...\n");
 
-    // Allocate memory for images on the heap
+    // Allocate memory for images 
     unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*expected_output)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*output_image)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
@@ -326,7 +318,6 @@ void test_invert() {
     }
 
     // Test case where the images are equal
-    // Initialize input_image and expected_output
     for (int x = 0; x < BMP_WIDTH; x++) {
         for (int y = 0; y < BMP_HEIGTH; y++) {
             input_image[x][y][0] = 0;
@@ -346,7 +337,6 @@ void test_invert() {
     assert_equal(output_image, expected_output, "test_invert_equal");
 
     // Test case where the images are not equal
-    // Reset output_image to ensure it matches the expected_output for the second test case
     for (int x = 0; x < BMP_WIDTH; x++) {
         for (int y = 0; y < BMP_HEIGTH; y++) {
             output_image[x][y][0] = 255;
@@ -378,7 +368,7 @@ void test_invert() {
 void test_greyscale() {
     printf("Running test_greyscale...\n");
 
-    // Allocate memory for images on the heap
+    // Allocate memory for images 
     unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*expected_output)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*output_image)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
@@ -389,7 +379,6 @@ void test_greyscale() {
     }
 
     // Test case where the images are equal
-    // Initialize input_image and expected_output
     for (int x = 0; x < BMP_WIDTH; x++) {
         for (int y = 0; y < BMP_HEIGTH; y++) {
             input_image[x][y][0] = 0;
@@ -409,7 +398,6 @@ void test_greyscale() {
     assert_equal(output_image, expected_output, "test_greyscale_equal");
 
     // Test case where the images are not equal
-    // Reset output_image to ensure it matches the expected_output for the second test case
     for (int x = 0; x < BMP_WIDTH; x++) {
         for (int y = 0; y < BMP_HEIGTH; y++) {
             output_image[x][y][0] = 85;
@@ -441,7 +429,7 @@ void test_greyscale() {
 void test_binary_threshold() {
     printf("Running test_binary_threshold...\n");
 
-    // Allocate memory for images on the heap
+    // Allocate memory for images
     unsigned char (*input_image)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*expected_output)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
     unsigned char (*output_image)[BMP_HEIGTH][BMP_CHANNELS] = malloc(BMP_WIDTH * BMP_HEIGTH * BMP_CHANNELS);
@@ -452,7 +440,6 @@ void test_binary_threshold() {
     }
 
     // Test case where the images are equal
-    // Initialize input_image and expected_output
     for (int x = 0; x < BMP_WIDTH; x++) {
         for (int y = 0; y < BMP_HEIGTH; y++) {
             input_image[x][y][0] = 0;
@@ -476,7 +463,6 @@ void test_binary_threshold() {
     assert_equal(output_image, expected_output, "test_binary_threshold_equal");
 
     // Test case where the images are not equal
-    // Modify expected_output to make it different
     for (int x = 0; x < BMP_WIDTH; x++) {
         for (int y = 0; y < BMP_HEIGTH; y++) {
             expected_output[x][y][0] = 100;
