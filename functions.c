@@ -147,7 +147,7 @@ void print_coordinates_for_cells() {
 void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
   start = clock();
   //Checks the whole image, by create a 12x12 area to check for white cells
-  int checking_area = 10;
+  int checking_area = 12;
   for (int x = 0; x < BMP_WIDTH; x++){
     for (int y = 0; y < BMP_HEIGTH; y++){
       int white = 0;
