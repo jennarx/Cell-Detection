@@ -15,7 +15,7 @@
 // To compile test (win): gcc cbmp.c functions.c test_main.c -o test_main.exe -std=c99
 // To run test (win): test_main.exe
 
-#define Max_celler 1000
+#define Max_celler 500 //setting the max amount of cells to be found. 500 should be enought
 int coordinate_x_cells[Max_celler];
 int coordinate_y_cells[Max_celler];
 int cells = 0;
