@@ -12,6 +12,7 @@ unsigned char output_image1[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 unsigned char output_image2[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 unsigned char output_image3[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
 unsigned char output_image4[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS];
+void print_coordinates_for_cells();
 
 //Main function
 int main(int argc, char** argv){
@@ -52,6 +53,7 @@ int main(int argc, char** argv){
   write_bitmap(output_image4, argv[2]);
   end = clock();
   cpu_time_used= end - start;
+  print_coordinates_for_cells();
   printf("Total time for overall: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
   printf("Done!\n");
   return 0;

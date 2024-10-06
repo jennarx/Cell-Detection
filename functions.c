@@ -37,7 +37,13 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
   }
   end = clock();
   cpu_time_used= end - start;
-  printf("Total time for invert: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
+}
+void print_coordinates_for_cells() {
+    for (int i=0; i<Max_celler; i++) {
+      if(coordinate_x_cells[i]> 0&&coordinate_y_cells[i] >0){
+        printf("Cell %d in coordinates: [%d, %d]\n",i +1,coordinate_x_cells[i], coordinate_y_cells[i]);
+      }
+    }
 }
   //Function to greyscale pixels of an image by taking the average of the RGB values
   void greyscale(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
@@ -55,7 +61,6 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
     }
     end = clock();
     cpu_time_used= end - start;
-    printf("Total time for grayscale: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
   }
 
     //Apply binary threshold to an image with a given threshold of 90
@@ -81,7 +86,6 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
       }
       end = clock();
       cpu_time_used= end - start;
-      printf("Total time for binary_threshold: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
     }
 
   //Apply binary erosion to an image
@@ -138,13 +142,12 @@ void invert(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsi
     printf("Number of cells: %d\n", cells);
     end = clock();
     cpu_time_used= end - start;
-    printf("Total time for binary_erosion: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
   }
 
 void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]){
   start = clock();
   //Checks the whole image, by create a 12x12 area to check for white cells
-  int checking_area = 12;
+  int checking_area = 10;
   for (int x = 0; x < BMP_WIDTH; x++){
     for (int y = 0; y < BMP_HEIGTH; y++){
       int white = 0;
@@ -202,7 +205,6 @@ void cell_detection_function(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BM
   }
   end = clock();
   cpu_time_used= end - start;
-  printf("Total time for cell_detection_function: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
 }
 
 void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS]) {
@@ -242,9 +244,7 @@ void draw_crosses_on_image(unsigned char input_image[BMP_WIDTH][BMP_HEIGTH][BMP_
   }
   end = clock();
   cpu_time_used= end - start;
-  printf("Total time for draw_crosses_on_image: %f ms\n", cpu_time_used * 1000.0 /CLOCKS_PER_SEC);
 }
-
 
 // Function to compare two images for testing purposes
 void assert_equal(unsigned char output_image[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], unsigned char expected_output[BMP_WIDTH][BMP_HEIGTH][BMP_CHANNELS], const char* test_name) {
